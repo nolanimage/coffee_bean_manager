@@ -40,16 +40,16 @@ A beautiful and intuitive coffee bean management system for coffee enthusiasts a
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/coffee-bean-manager.git
-   cd coffee-bean-manager
+   git clone https://github.com/nolanimage/coffee_bean_manager.git
+   cd coffee_bean_manager
    ```
 
 2. **Set up environment**
    ```bash
-   # Copy the example configuration
-   cp env.example .env
+   # Create environment file
+   touch .env
    
-   # Edit with your preferences (optional)
+   # Add your environment variables (see setup guide below)
    nano .env
    ```
 
@@ -170,6 +170,30 @@ We're brewing up some exciting new features:
 - 📊 **Advanced Analytics**: Machine learning insights about your coffee journey
 - 🔗 **Social Features**: Share and discover coffee with other enthusiasts
 - 🛒 **E-commerce Integration**: Direct ordering from coffee suppliers
+
+## 🔧 Environment Setup
+
+To run this application, you'll need to set up environment variables. Create a `.env` file in the root directory with the following variables:
+
+```env
+# Database Configuration
+POSTGRES_PASSWORD=your-secure-postgres-password
+
+# JWT Configuration  
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# Node Environment
+NODE_ENV=development
+
+# API Configuration
+PORT=5001
+REACT_APP_API_URL=http://localhost:5001/api
+
+# Database URL (auto-generated from POSTGRES_PASSWORD)
+DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:54329/coffee_db
+```
+
+**⚠️ Security Note**: Always change the default passwords and JWT secret in production environments!
 
 ## 📞 Support
 
