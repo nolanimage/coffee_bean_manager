@@ -213,42 +213,21 @@ We're brewing up some exciting new features:
 
 ## 🔧 Environment Setup
 
-To run this application, you'll need to set up environment variables. Create a `.env` file in the root directory with the following variables:
+To run this application, you'll need to set up environment variables. 
 
-```env
-# Database Configuration
-POSTGRES_PASSWORD=your-secure-postgres-password
+1. **Copy the environment sample file**:
+   ```bash
+   cp env.sample .env
+   ```
 
-# JWT Configuration  
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production
+2. **Edit the `.env` file** with your actual configuration values.
 
-# Token Expiration (optional - defaults provided)
-ACCESS_TOKEN_EXPIRY=15m
-REFRESH_TOKEN_EXPIRY=7d
-
-# Node Environment
-NODE_ENV=development
-
-# API Configuration
-PORT=5001
-REACT_APP_API_URL=http://localhost:5001/api
-
-# Frontend URL (for CORS in production)
-FRONTEND_URL=https://yourdomain.com
-
-# Database URL (auto-generated from POSTGRES_PASSWORD)
-DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:54329/coffee_db
-
-# Security Configuration (optional - defaults provided)
-AUDIT_LOG_LEVEL=info
-```
+The `env.sample` file contains all required environment variables with helpful comments for database configuration, JWT secrets, API settings, and security parameters.
 
 **⚠️ Security Notes**: 
 - Always change the default passwords and JWT secrets in production environments!
 - Use strong, unique passwords for all services
 - Never commit your `.env` file to version control
-- The `.env.example` file is intentionally excluded from the repository
 - Consider using a secrets management service in production
 - Regularly rotate JWT secrets and database passwords
 - Use HTTPS in production environments
