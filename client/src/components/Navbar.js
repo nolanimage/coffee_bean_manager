@@ -23,9 +23,9 @@ const Navbar = ({ navigation }) => {
               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-coffee-gradient rounded-2xl flex items-center justify-center shadow-glow group-hover:shadow-large transition-all duration-300 group-hover:scale-110">
                 <span className="text-white font-bold text-lg sm:text-xl">☕</span>
               </div>
-              <div className="hidden sm:block">
-                <span className="text-base sm:text-lg font-bold text-gray-900">Coffee Bean Manager</span>
-                <p className="text-xs sm:text-sm text-gray-500 -mt-1">Your perfect brew companion</p>
+              <div className="flex flex-col">
+                <span className="text-base sm:text-lg font-bold text-gray-900 leading-tight">Coffee Bean Manager</span>
+                <p className="text-xs sm:text-sm text-gray-500 leading-tight hidden sm:block">Your perfect brew companion</p>
               </div>
             </Link>
           </div>
