@@ -1,0 +1,331 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-gradient-to-br from-gray-50 via-white to-coffee-50 text-gray-900;
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-coffee-300 rounded-full hover:bg-coffee-400 transition-colors;
+  }
+
+  /* Hide scrollbar for horizontal scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+
+  /* Mobile touch improvements */
+  @media (max-width: 768px) {
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2.5 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 transform hover:scale-105 active:scale-95;
+    min-height: 44px; /* Better touch target for mobile */
+  }
+  
+  .btn-primary {
+    @apply bg-coffee-gradient text-white hover:shadow-glow focus:ring-coffee-500 font-semibold;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-500 border border-gray-200 shadow-soft;
+  }
+  
+  .btn-danger {
+    @apply bg-danger-500 text-white hover:bg-danger-600 focus:ring-danger-500;
+  }
+
+  .btn-success {
+    @apply bg-success-500 text-white hover:bg-success-600 focus:ring-success-500;
+  }
+
+  .btn-warning {
+    @apply bg-warning-500 text-white hover:bg-warning-600 focus:ring-warning-500;
+  }
+  
+  .input {
+    @apply w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-coffee-500 focus:border-transparent transition-all duration-200 bg-white shadow-soft;
+    min-height: 48px; /* Better touch target for mobile */
+  }
+
+  .input:focus {
+    @apply shadow-medium;
+  }
+  
+  .card {
+    @apply bg-white rounded-2xl shadow-soft border border-gray-100 p-6 transition-all duration-200 hover:shadow-medium;
+    backdrop-filter: blur(10px);
+  }
+
+  .card-glass {
+    @apply bg-white/80 backdrop-blur-md rounded-2xl shadow-soft border border-white/20;
+  }
+
+  .card-gradient {
+    @apply bg-coffee-gradient-light rounded-2xl shadow-soft border border-coffee-200;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-all duration-200;
+  }
+  
+  .badge-light {
+    @apply bg-coffee-100 text-coffee-800 hover:bg-coffee-200;
+  }
+  
+  .badge-medium {
+    @apply bg-warning-100 text-warning-800 hover:bg-warning-200;
+  }
+  
+  .badge-dark {
+    @apply bg-gray-100 text-gray-800 hover:bg-gray-200;
+  }
+
+  .badge-success {
+    @apply bg-success-100 text-success-800 hover:bg-success-200;
+  }
+
+  .badge-danger {
+    @apply bg-danger-100 text-danger-800 hover:bg-danger-200;
+  }
+
+  /* Enhanced navigation styles */
+  .nav-link {
+    @apply flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 hover:scale-105;
+  }
+
+  .nav-link-active {
+    @apply bg-coffee-gradient text-white shadow-glow;
+  }
+
+  .nav-link-inactive {
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-50;
+  }
+
+  /* Loading animations */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-coffee-200 border-t-coffee-600;
+  }
+
+  .loading-pulse {
+    @apply animate-pulse-gentle bg-gray-200 rounded;
+  }
+
+  /* Enhanced grid layouts */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  }
+
+  .grid-dashboard {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6;
+  }
+
+  /* Mobile-first responsive utilities */
+  .mobile-padding {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  .mobile-margin {
+    @apply mx-4 sm:mx-6 lg:mx-8;
+  }
+
+  /* Enhanced typography */
+  .heading-1 {
+    @apply text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900;
+  }
+
+  .heading-2 {
+    @apply text-lg sm:text-xl font-bold text-gray-900;
+  }
+
+  .heading-3 {
+    @apply text-base sm:text-lg font-semibold text-gray-900;
+  }
+
+  .text-body {
+    @apply text-gray-600 leading-relaxed;
+  }
+
+  /* Glass morphism effects */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  /* Enhanced focus states for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-coffee-500 focus:ring-offset-2;
+  }
+
+  /* Mobile-specific improvements */
+  @media (max-width: 768px) {
+    .btn {
+      @apply px-6 py-3 text-base;
+    }
+    
+    .card {
+      @apply p-4 rounded-xl;
+    }
+    
+    .input {
+      @apply px-4 py-3 text-base;
+    }
+  }
+} 
+
+/* Custom slider styles for roast level */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-track {
+  background: linear-gradient(to right, #fef3c7, #fdba74, #a16207, #92400e);
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  background: #92400e;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: #78350f;
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-track {
+  background: linear-gradient(to right, #fef3c7, #fdba74, #a16207, #92400e);
+  height: 8px;
+  border-radius: 4px;
+  border: none;
+}
+
+.slider::-moz-range-thumb {
+  background: #92400e;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  background: #78350f;
+  transform: scale(1.1);
+}
+
+/* Coffee-themed colors */
+.bg-coffee-25 {
+  background-color: #fef7ed;
+}
+
+.bg-coffee-50 {
+  background-color: #fef3c7;
+}
+
+.bg-coffee-100 {
+  background-color: #fde68a;
+}
+
+.bg-coffee-200 {
+  background-color: #fcd34d;
+}
+
+.bg-coffee-300 {
+  background-color: #fbbf24;
+}
+
+.bg-coffee-400 {
+  background-color: #f59e0b;
+}
+
+.bg-coffee-500 {
+  background-color: #d97706;
+}
+
+.bg-coffee-600 {
+  background-color: #b45309;
+}
+
+.bg-coffee-700 {
+  background-color: #92400e;
+}
+
+.bg-coffee-800 {
+  background-color: #78350f;
+}
+
+.bg-coffee-900 {
+  background-color: #451a03;
+}
+
+.text-coffee-500 {
+  color: #d97706;
+}
+
+.text-coffee-600 {
+  color: #b45309;
+}
+
+.text-coffee-700 {
+  color: #92400e;
+}
+
+.border-coffee-300 {
+  border-color: #fbbf24;
+}
+
+.border-coffee-500 {
+  border-color: #d97706;
+}
+
+/* Custom brown colors for roast levels */
+.bg-brown-400 {
+  background-color: #a16207;
+}
+
+.bg-brown-600 {
+  background-color: #92400e;
+} 
