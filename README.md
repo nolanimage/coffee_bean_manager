@@ -221,6 +221,11 @@ POSTGRES_PASSWORD=your-secure-postgres-password
 
 # JWT Configuration  
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_REFRESH_SECRET=your-super-secret-refresh-key-change-this-in-production
+
+# Token Expiration (optional - defaults provided)
+ACCESS_TOKEN_EXPIRY=15m
+REFRESH_TOKEN_EXPIRY=7d
 
 # Node Environment
 NODE_ENV=development
@@ -229,14 +234,24 @@ NODE_ENV=development
 PORT=5001
 REACT_APP_API_URL=http://localhost:5001/api
 
+# Frontend URL (for CORS in production)
+FRONTEND_URL=https://yourdomain.com
+
 # Database URL (auto-generated from POSTGRES_PASSWORD)
 DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:54329/coffee_db
+
+# Security Configuration (optional - defaults provided)
+AUDIT_LOG_LEVEL=info
 ```
 
-**⚠️ Security Note**: 
-- Always change the default passwords and JWT secret in production environments!
+**⚠️ Security Notes**: 
+- Always change the default passwords and JWT secrets in production environments!
+- Use strong, unique passwords for all services
 - Never commit your `.env` file to version control
 - The `.env.example` file is intentionally excluded from the repository
+- Consider using a secrets management service in production
+- Regularly rotate JWT secrets and database passwords
+- Use HTTPS in production environments
 
 ## 📞 Support
 
@@ -254,3 +269,55 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Built with ❤️ by coffee lovers, for coffee lovers**
 
 *Let's brew something amazing together! ☕✨* 
+
+## 🔒 Security Features
+
+### 🛡️ **Authentication & Authorization**
+- **JWT-based Authentication**: Secure token-based authentication with access and refresh tokens
+- **Password Security**: Strong password requirements with bcrypt hashing (14 salt rounds)
+- **Account Lockout**: Automatic account lockout after 5 failed login attempts
+- **Session Management**: Configurable session timeouts and secure cookie settings
+- **Role-based Access Control**: Framework for implementing user roles and permissions
+
+### 🔐 **API Security**
+- **Rate Limiting**: Prevents brute force attacks (100 requests/15min, 5 auth requests/15min)
+- **Input Validation**: Comprehensive validation using express-validator
+- **Request Size Limits**: Prevents large payload attacks (10MB limit)
+- **CORS Protection**: Strict CORS configuration for cross-origin requests
+- **Security Headers**: Comprehensive security headers including CSP, HSTS, XSS protection
+
+### 🗄️ **Database Security**
+- **Row Level Security (RLS)**: User-specific data access policies
+- **SQL Injection Prevention**: Parameterized queries and input sanitization
+- **Audit Logging**: Comprehensive audit trail for all user actions
+- **Connection Security**: Configurable SSL and connection limits
+- **Data Encryption**: Sensitive data encryption at rest
+
+### 🚨 **Monitoring & Logging**
+- **Security Event Logging**: All authentication and authorization events logged
+- **Error Handling**: Secure error messages that don't expose system details
+- **Audit Trail**: Complete audit log with user actions, IP addresses, and timestamps
+- **Failed Login Tracking**: Monitoring and alerting for suspicious activity
+
+### 🔧 **Security Configuration**
+- **Environment-based Settings**: Different security levels for development and production
+- **Configurable Policies**: Easily adjustable security parameters
+- **Secret Management**: Secure handling of API keys and secrets
+- **HTTPS Enforcement**: Automatic HTTPS redirect in production
+
+### 📋 **Security Best Practices**
+- **Principle of Least Privilege**: Users only access their own data
+- **Defense in Depth**: Multiple layers of security protection
+- **Regular Updates**: Security patches and dependency updates
+- **Security Headers**: Comprehensive browser security headers
+- **Input Sanitization**: Protection against XSS and injection attacks
+
+### 🚀 **Production Security Checklist**
+- [ ] Change all default passwords and secrets
+- [ ] Enable HTTPS with valid SSL certificates
+- [ ] Configure proper CORS origins
+- [ ] Set up monitoring and alerting
+- [ ] Implement backup and recovery procedures
+- [ ] Regular security audits and penetration testing
+- [ ] Keep all dependencies updated
+- [ ] Monitor audit logs for suspicious activity 

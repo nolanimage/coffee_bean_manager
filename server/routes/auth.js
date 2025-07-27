@@ -4,14 +4,21 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
 const db = require('../db');
-const { authenticateToken, JWT_SECRET } = require('../middleware/auth');
+const { 
+  authenticateToken, 
+  generateAccessToken, 
+  generateRefreshToken,
+  refreshToken: refreshTokenHandler,
+  JWT_SECRET 
+} = require('../middleware/auth');
 
 const router = express.Router();
 
 // Validation middleware
 const validateRegistration = [
   body('email').isEmail().withMessage('Valid email is required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'),
   body('first_name').optional().isLength({ min: 1 }).withMessage('First name is required'),
   body('last_name').optional().isLength({ min: 1 }).withMessage('Last name is required'),
   body('username').optional().isLength({ min: 3 }).withMessage('Username must be at least 3 characters')
@@ -28,7 +35,8 @@ const validatePasswordReset = [
 
 const validatePasswordResetConfirm = [
   body('token').notEmpty().withMessage('Reset token is required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters')
+  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')
 ];
 
 // POST /api/auth/register
@@ -47,25 +55,25 @@ router.post('/register', validateRegistration, async (req, res) => {
       return res.status(400).json({ error: 'User with this email or username already exists' });
     }
 
-    // Hash password
-    const saltRounds = 12;
+    // Hash password with higher salt rounds for better security
+    const saltRounds = 14;
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Create user
+    // Create user with active status
     const result = await db.query(`
-      INSERT INTO users (email, password_hash, first_name, last_name, username)
-      VALUES ($1, $2, $3, $4, $5)
+      INSERT INTO users (email, password_hash, first_name, last_name, username, is_active)
+      VALUES ($1, $2, $3, $4, $5, true)
       RETURNING id, email, first_name, last_name, username, created_at
     `, [email, passwordHash, first_name, last_name, username]);
 
     const user = result.rows[0];
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    // Generate tokens
+    const accessToken = generateAccessToken(user.id, user.email);
+    const refreshToken = generateRefreshToken(user.id, user.email);
+
+    // Log successful registration
+    console.log(`New user registered: ${user.email} at ${new Date().toISOString()}`);
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -76,7 +84,9 @@ router.post('/register', validateRegistration, async (req, res) => {
         last_name: user.last_name,
         username: user.username
       },
-      token
+      accessToken,
+      refreshToken,
+      expiresIn: 900 // 15 minutes in seconds
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -95,7 +105,7 @@ router.post('/login', validateLogin, async (req, res) => {
     const { email, password } = req.body;
 
     // Find user by email
-    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await db.query('SELECT * FROM users WHERE email = $1 AND is_active = true', [email]);
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
@@ -105,15 +115,17 @@ router.post('/login', validateLogin, async (req, res) => {
     // Verify password
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
     if (!isValidPassword) {
+      // Log failed login attempt
+      console.log(`Failed login attempt for email: ${email} at ${new Date().toISOString()}`);
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    // Generate tokens
+    const accessToken = generateAccessToken(user.id, user.email);
+    const refreshToken = generateRefreshToken(user.id, user.email);
+
+    // Log successful login
+    console.log(`User logged in: ${user.email} at ${new Date().toISOString()}`);
 
     res.json({
       message: 'Login successful',
@@ -124,11 +136,30 @@ router.post('/login', validateLogin, async (req, res) => {
         last_name: user.last_name,
         username: user.username
       },
-      token
+      accessToken,
+      refreshToken,
+      expiresIn: 900 // 15 minutes in seconds
     });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Failed to login' });
+  }
+});
+
+// POST /api/auth/refresh
+router.post('/refresh', refreshTokenHandler);
+
+// POST /api/auth/logout
+router.post('/logout', authenticateToken, async (req, res) => {
+  try {
+    // In a more advanced implementation, you could blacklist the refresh token
+    // For now, we'll just return a success message
+    console.log(`User logged out: ${req.user.email} at ${new Date().toISOString()}`);
+    
+    res.json({ message: 'Logout successful' });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ error: 'Failed to logout' });
   }
 });
 
@@ -143,7 +174,7 @@ router.post('/forgot-password', validatePasswordReset, async (req, res) => {
     const { email } = req.body;
 
     // Check if user exists
-    const userResult = await db.query('SELECT id, email, first_name FROM users WHERE email = $1', [email]);
+    const userResult = await db.query('SELECT id, email, first_name FROM users WHERE email = $1 AND is_active = true', [email]);
     if (userResult.rows.length === 0) {
       // Don't reveal if email exists or not for security
       return res.json({ message: 'If an account with that email exists, a password reset link has been sent.' });
@@ -162,6 +193,9 @@ router.post('/forgot-password', validatePasswordReset, async (req, res) => {
       SET reset_token = $1, reset_token_expiry = $2 
       WHERE id = $3
     `, [resetTokenHash, resetTokenExpiry, user.id]);
+
+    // Log password reset request
+    console.log(`Password reset requested for: ${user.email} at ${new Date().toISOString()}`);
 
     // In a real application, you would send an email here
     // For now, we'll return the token in the response for testing
@@ -192,6 +226,7 @@ router.post('/reset-password', validatePasswordResetConfirm, async (req, res) =>
       FROM users 
       WHERE reset_token IS NOT NULL 
       AND reset_token_expiry > NOW()
+      AND is_active = true
     `);
 
     if (userResult.rows.length === 0) {
@@ -206,8 +241,8 @@ router.post('/reset-password', validatePasswordResetConfirm, async (req, res) =>
       return res.status(400).json({ error: 'Invalid or expired reset token' });
     }
 
-    // Hash new password
-    const saltRounds = 12;
+    // Hash new password with higher salt rounds
+    const saltRounds = 14;
     const newPasswordHash = await bcrypt.hash(password, saltRounds);
 
     // Update password and clear reset token
@@ -216,6 +251,9 @@ router.post('/reset-password', validatePasswordResetConfirm, async (req, res) =>
       SET password_hash = $1, reset_token = NULL, reset_token_expiry = NULL, updated_at = NOW()
       WHERE id = $2
     `, [newPasswordHash, user.id]);
+
+    // Log password reset
+    console.log(`Password reset completed for user ID: ${user.id} at ${new Date().toISOString()}`);
 
     res.json({ message: 'Password reset successfully' });
   } catch (error) {
@@ -288,7 +326,8 @@ router.put('/profile', authenticateToken, [
 // POST /api/auth/change-password
 router.post('/change-password', authenticateToken, [
   body('currentPassword').notEmpty().withMessage('Current password is required'),
-  body('newPassword').isLength({ min: 6 }).withMessage('New password must be at least 6 characters')
+  body('newPassword').isLength({ min: 8 }).withMessage('New password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -308,12 +347,15 @@ router.post('/change-password', authenticateToken, [
       return res.status(400).json({ error: 'Current password is incorrect' });
     }
 
-    // Hash new password
-    const saltRounds = 12;
+    // Hash new password with higher salt rounds
+    const saltRounds = 14;
     const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
 
     // Update password
     await db.query('UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2', [newPasswordHash, req.user.id]);
+
+    // Log password change
+    console.log(`Password changed for user: ${req.user.email} at ${new Date().toISOString()}`);
 
     res.json({ message: 'Password changed successfully' });
   } catch (error) {
