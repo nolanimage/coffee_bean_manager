@@ -8,7 +8,7 @@ const router = express.Router();
 const validateTastingNote = [
   body('coffee_bean_id').isInt({ min: 1 }).withMessage('Valid coffee bean ID is required'),
   body('brew_method').optional(),
-  body('overall_rating').isInt({ min: 1, max: 10 }).withMessage('Overall rating must be between 1-10'),
+  body('overall_rating').isFloat({ min: 0, max: 10 }).withMessage('Overall rating must be between 0-10'),
   body('notes').optional(),
   body('tasting_date').optional().custom((value) => {
     if (!value) return true;
