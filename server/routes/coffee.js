@@ -102,8 +102,10 @@ router.post('/', validateCoffeeBean, async (req, res) => {
 // PUT update coffee bean
 router.put('/:id', validateCoffeeBean, async (req, res) => {
   try {
+    console.log('Received update data:', req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 

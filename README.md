@@ -9,24 +9,29 @@ A beautiful and intuitive coffee bean management system for coffee enthusiasts a
 - **Visual Organization**: Group beans by country with beautiful cards and flags
 - **Inventory Management**: Track stock levels, purchase dates, and expiry alerts
 - **Multi-Currency Support**: Support for HKD, USD, and JPY with automatic formatting
+- **Photo Upload**: Add beautiful photos of your coffee beans
+- **Smart Forms**: Pre-filled edit forms with current data
 
 ### ☕ **Tasting Experience**
 - **Detailed Tasting Notes**: Document brew methods, ratings, and personal notes
-- **Rating System**: Multi-dimensional rating with overall quality scores
+- **Rating System**: Multi-dimensional rating with overall quality scores (1-10 scale)
 - **Brewing Documentation**: Record grind size, water temperature, and brew time
 - **Visual History**: Beautiful timeline of your coffee journey
+- **Auto-Date Recording**: Automatic timestamp recording for tasting sessions
 
 ### 📊 **Analytics & Insights**
 - **Dashboard Overview**: Real-time statistics and recent activities
 - **Cost Analysis**: Track spending and cost per cup calculations
 - **Trend Analysis**: Visual charts showing your coffee preferences
 - **Freshness Alerts**: Get notified when beans are expiring
+- **Horizontal Scrolling**: Smooth navigation through coffee collections
 
 ### 🎨 **Modern Interface**
 - **Responsive Design**: Works perfectly on desktop, tablet, and mobile
 - **Horizontal Scrolling**: Smooth navigation through your coffee collection
 - **Intuitive Navigation**: Easy-to-use interface with beautiful animations
-- **Dark Mode Ready**: Clean, modern design that's easy on the eyes
+- **Typography Optimized**: Beautiful, readable fonts and spacing
+- **Touch-Friendly**: Optimized for mobile and tablet use
 
 ### 🔐 **User Management**
 - **Secure Authentication**: Safe login and registration system
@@ -35,6 +40,11 @@ A beautiful and intuitive coffee bean management system for coffee enthusiasts a
 - **Data Privacy**: Your coffee data stays private and secure
 
 ## 🚀 Quick Start
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+- Docker and Docker Compose (for database)
 
 ### Option 1: One-Click Setup (Recommended)
 
@@ -68,15 +78,19 @@ A beautiful and intuitive coffee bean management system for coffee enthusiasts a
 
 1. **Install dependencies**
    ```bash
-   npm run install-all
+   # Install backend dependencies
+   cd server && npm install
+   
+   # Install frontend dependencies
+   cd ../client && npm install
    ```
 
 2. **Start the services**
    ```bash
-   # Start backend
+   # Start backend (in server directory)
    cd server && npm start
    
-   # Start frontend (in new terminal)
+   # Start frontend (in new terminal, client directory)
    cd client && npm start
    ```
 
@@ -90,19 +104,27 @@ A beautiful and intuitive coffee bean management system for coffee enthusiasts a
 - Click "Add Coffee Bean" 
 - Fill in the details (name, origin, roast level)
 - Add initial stock and purchase information
+- Upload a photo of your coffee bean
 - Save and start tracking!
 
 ### 3. **Document Tastings**
 - Select a coffee bean
 - Choose your brew method
-- Rate the coffee and add notes
+- Rate the coffee (1-10 scale) and add notes
+- The tasting date is automatically recorded
 - Build your tasting history
 
 ### 4. **Explore Analytics**
 - View your dashboard for overview
 - Check cost analysis for spending insights
 - Monitor freshness alerts
-- Explore your coffee journey
+- Explore your coffee journey with horizontal scrolling
+
+### 5. **Edit Coffee Beans**
+- Click on any coffee bean to view details
+- Use the "Edit" button to modify information
+- All fields are pre-filled with current data
+- Save changes easily
 
 ## 🎯 Perfect For
 
@@ -128,10 +150,28 @@ A beautiful and intuitive coffee bean management system for coffee enthusiasts a
 
 Built with modern web technologies for the best user experience:
 
-- **Frontend**: React, Tailwind CSS, Lucide Icons
-- **Backend**: Node.js, Express, PostgreSQL
+- **Frontend**: React, Tailwind CSS, Lucide Icons, React Hook Form
+- **Backend**: Node.js, Express, PostgreSQL, Supabase
 - **Deployment**: Docker, Docker Compose
 - **Security**: JWT authentication, bcrypt hashing
+- **Database**: PostgreSQL with Row Level Security
+
+## 🔧 Recent Fixes & Improvements
+
+### ✅ **Latest Updates**
+- **Fixed Tasting Note Creation**: Resolved data type issues with rating system
+- **Improved Form Pre-filling**: Edit forms now properly display current data
+- **Enhanced Typography**: Better font sizes and spacing throughout the app
+- **Auto-Date Recording**: Tasting dates are automatically captured
+- **Horizontal Scrolling**: Smooth navigation for coffee collections
+- **Multi-Currency Support**: Full support for USD, HKD, and JPY
+
+### 🐛 **Bug Fixes**
+- Fixed "Failed to add coffee bean" validation issues
+- Resolved "Failed to update coffee bean" form problems
+- Fixed "Failed to load coffee bean" data fetching issues
+- Corrected tasting note rating data types (integer vs float)
+- Fixed date validation for optional fields
 
 ## 🤝 Contributing
 
@@ -193,7 +233,10 @@ REACT_APP_API_URL=http://localhost:5001/api
 DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:54329/coffee_db
 ```
 
-**⚠️ Security Note**: Always change the default passwords and JWT secret in production environments!
+**⚠️ Security Note**: 
+- Always change the default passwords and JWT secret in production environments!
+- Never commit your `.env` file to version control
+- The `.env.example` file is intentionally excluded from the repository
 
 ## 📞 Support
 

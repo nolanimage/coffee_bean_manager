@@ -12,6 +12,7 @@ const FormField = ({
   helperText,
   className = '',
   options = [], // For radio buttons and button groups
+  defaultValue,
   ...props 
 }) => {
   const inputProps = register ? register(name, validation) : {};
@@ -32,7 +33,7 @@ const FormField = ({
     };
 
     // Get current value or default to Medium
-    const currentValue = inputProps.value || 'Medium';
+    const currentValue = defaultValue || 'Medium';
     const currentIndex = getSliderValue(currentValue);
 
     // Create a hidden input for React Hook Form
@@ -217,6 +218,7 @@ const FormField = ({
               name={`${name}_currency`}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               {...register(`${name}_currency`, { required: 'Currency is required' })}
+              defaultValue={props.defaultCurrency || 'USD'}
             >
               {currencies.map((currency) => (
                 <option key={currency.value} value={currency.value}>
@@ -283,7 +285,7 @@ const FormField = ({
           />
           <div className="flex justify-between text-xs text-gray-500">
             <span>{props.min || 0}</span>
-            <span>{inputProps.value || props.min || 0}</span>
+            <span>{defaultValue || props.min || 0}</span>
             <span>{props.max || 10}</span>
           </div>
         </div>

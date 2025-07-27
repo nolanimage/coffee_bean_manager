@@ -14,15 +14,22 @@ const CoffeeBeanDetail = () => {
   const fetchCoffeeBeanData = async () => {
     try {
       setLoading(true);
+      console.log('Fetching coffee bean with ID:', id);
+      
       const [beanResponse, tastingsResponse] = await Promise.all([
         coffeeBeansAPI.getById(id),
         tastingNotesAPI.getByBeanId(id)
       ]);
+      
+      console.log('Coffee bean response:', beanResponse);
+      console.log('Tastings response:', tastingsResponse);
+      
       setCoffeeBean(beanResponse.data);
       setTastings(tastingsResponse.data);
     } catch (error) {
       console.error('Error fetching coffee bean data:', error);
-      toast.error('Failed to load coffee bean details');
+      console.error('Error details:', error.response?.data || error.message);
+      toast.error('Failed to load coffee bean');
     } finally {
       setLoading(false);
     }

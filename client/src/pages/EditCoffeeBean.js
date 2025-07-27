@@ -18,16 +18,48 @@ const EditCoffeeBean = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
     reset
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      roast_level: 'Medium'
+    }
+  });
 
   useEffect(() => {
     const fetchCoffeeBean = async () => {
       try {
-        const data = await coffeeBeansAPI.getById(id);
+        const response = await coffeeBeansAPI.getById(id);
+        const data = response.data;
+        console.log('Fetched coffee bean data:', data);
+        
         setCoffeeBean(data);
-        reset(data);
+        
+        // Pre-fill form with fetched data
+        const formData = {
+          name: data.name || '',
+          origin: data.origin || '',
+          roast_level: data.roast_level || 'Medium',
+          description: data.description || '',
+          amount_grams: data.amount_grams || '',
+          buying_price: data.buying_price || '',
+          buying_price_currency: data.buying_price_currency || 'USD',
+          buying_place: data.buying_place || '',
+          buying_date: data.buying_date ? data.buying_date.split('T')[0] : '',
+          roast_date: data.roast_date ? data.roast_date.split('T')[0] : ''
+        };
+        
+        console.log('Form data to reset:', formData);
+        reset(formData);
+        
+        // Ensure roast level is properly set
+        if (data.roast_level) {
+          setValue('roast_level', data.roast_level);
+        } else {
+          setValue('roast_level', 'Medium');
+        }
+        
         if (data.photo_url) {
           setPhotoPreview(data.photo_url);
         }
@@ -41,7 +73,7 @@ const EditCoffeeBean = () => {
     };
 
     fetchCoffeeBean();
-  }, [id, navigate, reset]);
+  }, [id, navigate, reset, setValue]);
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -65,11 +97,15 @@ const EditCoffeeBean = () => {
 
   const onSubmit = async (data) => {
     try {
+      console.log('Form data before processing:', data);
+      
       // Extract currency data from the form
       const formData = {
         ...data,
         buying_price_currency: data.buying_price_currency || 'USD'
       };
+      
+      console.log('Form data after processing:', formData);
 
       let photoUrl = coffeeBean?.photo_url || null;
       
@@ -163,6 +199,7 @@ const EditCoffeeBean = () => {
               placeholder="e.g., Ethiopian Yirgacheffe"
               required
               error={errors.name?.message}
+              defaultValue={coffeeBean?.name}
             />
 
             {/* Photo Upload */}
@@ -219,6 +256,7 @@ const EditCoffeeBean = () => {
                 type="text"
                 register={register}
                 placeholder="e.g., Ethiopia"
+                defaultValue={coffeeBean?.origin}
               />
 
               <FormField
@@ -227,6 +265,7 @@ const EditCoffeeBean = () => {
                 type="roast-slider"
                 register={register}
                 validation={{ required: 'Roast level is required' }}
+                defaultValue={coffeeBean?.roast_level}
               />
             </div>
 
@@ -239,6 +278,7 @@ const EditCoffeeBean = () => {
                 placeholder="250"
                 step="1"
                 min="0"
+                defaultValue={coffeeBean?.amount_grams}
               />
 
               <FormField
@@ -247,6 +287,8 @@ const EditCoffeeBean = () => {
                 type="currency-price"
                 register={register}
                 validation={{ required: 'Price is required' }}
+                defaultValue={coffeeBean?.buying_price}
+                defaultCurrency={coffeeBean?.buying_price_currency}
               />
             </div>
 
@@ -256,6 +298,7 @@ const EditCoffeeBean = () => {
               type="text"
               register={register}
               placeholder="e.g., Local Coffee Shop, Online Store"
+              defaultValue={coffeeBean?.buying_place}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -264,6 +307,7 @@ const EditCoffeeBean = () => {
                 name="buying_date"
                 type="date"
                 register={register}
+                defaultValue={coffeeBean?.buying_date ? coffeeBean.buying_date.split('T')[0] : ''}
               />
 
               <FormField
@@ -271,6 +315,7 @@ const EditCoffeeBean = () => {
                 name="roast_date"
                 type="date"
                 register={register}
+                defaultValue={coffeeBean?.roast_date ? coffeeBean.roast_date.split('T')[0] : ''}
               />
             </div>
 
@@ -280,6 +325,7 @@ const EditCoffeeBean = () => {
               type="textarea"
               register={register}
               placeholder="Any notes about flavor, brewing method, etc."
+              defaultValue={coffeeBean?.description}
             />
           </div>
         </div>

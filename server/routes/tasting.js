@@ -8,9 +8,15 @@ const router = express.Router();
 const validateTastingNote = [
   body('coffee_bean_id').isInt({ min: 1 }).withMessage('Valid coffee bean ID is required'),
   body('brew_method').optional(),
-  body('overall_rating').isFloat({ min: 1, max: 10 }).withMessage('Overall rating must be between 1-10'),
+  body('overall_rating').isInt({ min: 1, max: 10 }).withMessage('Overall rating must be between 1-10'),
   body('notes').optional(),
-  body('tasting_date').optional().isISO8601().withMessage('Invalid tasting date'),
+  body('tasting_date').optional().custom((value) => {
+    if (!value) return true;
+    // Accept both ISO8601 full format and date-only format
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+    return dateRegex.test(value) || isoRegex.test(value);
+  }).withMessage('Invalid tasting date format'),
   body('water_temp').optional().isFloat({ min: 0 }).withMessage('Water temperature must be a positive number'),
   body('brew_time').optional().isInt({ min: 0 }).withMessage('Brew time must be a positive integer')
 ];
@@ -126,8 +132,10 @@ router.get('/stats', async (req, res) => {
 // POST create new tasting note
 router.post('/', validateTastingNote, async (req, res) => {
   try {
+    console.log('Received tasting note data:', req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 

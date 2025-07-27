@@ -40,9 +40,9 @@ const AddTastingNote = () => {
       const formData = {
         coffee_bean_id: parseInt(data.coffee_bean_id),
         brew_method: data.brew_method || null,
-        overall_rating: parseFloat(data.overall_rating),
+        overall_rating: parseInt(data.overall_rating),
         notes: data.notes || null,
-        tasting_date: data.tasting_date || new Date().toISOString().split('T')[0],
+        tasting_date: new Date().toISOString().split('T')[0], // Always use current date (date only)
         water_temp: data.water_temp || null,
         brew_time: data.brew_time ? parseInt(data.brew_time) : null
       };
@@ -176,14 +176,26 @@ const AddTastingNote = () => {
               />
             </div>
 
-            <FormField
-              label="Tasting Date"
-              name="tasting_date"
-              type="date"
-              register={register}
-              validation={{ required: 'Tasting date is required' }}
-              required
-            />
+            {/* Tasting Date - Auto-set to current date/time */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tasting Date
+              </label>
+              <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  {new Date().toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Automatically recorded when you save
+                </p>
+              </div>
+            </div>
 
             {/* Overall Rating */}
             <div>

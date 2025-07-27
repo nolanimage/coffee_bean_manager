@@ -24,8 +24,7 @@ const Navbar = ({ navigation }) => {
                 <span className="text-white font-bold text-lg sm:text-xl">☕</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-base sm:text-lg font-bold text-gray-900 leading-tight">Coffee Bean Manager</span>
-                <p className="text-xs sm:text-sm text-gray-500 leading-tight hidden sm:block">Your perfect brew companion</p>
+                <span className="text-base sm:text-lg font-bold text-gray-900">Coffee Bean Manager</span>
               </div>
             </Link>
           </div>
