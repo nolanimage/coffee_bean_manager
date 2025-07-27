@@ -28,11 +28,25 @@ const FormField = ({
     // Convert string value to slider index
     const getSliderValue = (value) => {
       const index = roastLevels.findIndex(level => level.value === value);
-      return index >= 0 ? index : 0;
+      return index >= 0 ? index : 1; // Default to Medium (index 1)
     };
+
+    // Get current value or default to Medium
+    const currentValue = inputProps.value || 'Medium';
+    const currentIndex = getSliderValue(currentValue);
+
+    // Create a hidden input for React Hook Form
+    const hiddenInput = (
+      <input
+        type="hidden"
+        {...inputProps}
+        value={currentValue}
+      />
+    );
 
     return (
       <div className={`space-y-3 ${className}`}>
+        {hiddenInput}
         {label && (
           <label className="block text-sm font-medium text-gray-700">
             {label}
@@ -56,13 +70,12 @@ const FormField = ({
               min="0"
               max="3"
               step="1"
-              defaultValue="1"
-              {...inputProps}
+              value={currentIndex}
               onChange={(e) => {
                 const index = parseInt(e.target.value);
                 const roastValue = roastLevels[index]?.value || 'Medium';
                 
-                // Update the form value
+                // Update the form value using React Hook Form's onChange
                 if (inputProps.onChange) {
                   inputProps.onChange({
                     target: {
@@ -72,6 +85,7 @@ const FormField = ({
                   });
                 }
               }}
+              onBlur={inputProps.onBlur}
               className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
             />
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-200 via-orange-300 to-brown-600 rounded-lg pointer-events-none opacity-30" />

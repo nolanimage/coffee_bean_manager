@@ -10,13 +10,22 @@ const validateCoffeeBean = [
   body('origin').optional(),
   body('roast_level').optional().isIn(['Light', 'Medium', 'Medium-Dark', 'Dark']).withMessage('Invalid roast level'),
   body('description').optional(),
-  body('buying_date').optional().isISO8601().withMessage('Invalid date format'),
+  body('buying_date').optional().custom((value) => {
+    if (value === '' || value === null || value === undefined) return true;
+    return require('validator').isISO8601(value);
+  }).withMessage('Invalid date format'),
   body('buying_place').optional(),
   body('buying_price').optional().isFloat({ min: 0 }).withMessage('Buying price must be a positive number'),
   body('buying_price_currency').optional().isIn(['USD', 'HKD', 'JPY']).withMessage('Invalid currency code'),
   body('amount_grams').optional().isFloat({ min: 0 }).withMessage('Amount must be a positive number'),
-  body('roast_date').optional().isISO8601().withMessage('Invalid roast date format'),
-  body('best_by_date').optional().isISO8601().withMessage('Invalid best by date format'),
+  body('roast_date').optional().custom((value) => {
+    if (value === '' || value === null || value === undefined) return true;
+    return require('validator').isISO8601(value);
+  }).withMessage('Invalid roast date format'),
+  body('best_by_date').optional().custom((value) => {
+    if (value === '' || value === null || value === undefined) return true;
+    return require('validator').isISO8601(value);
+  }).withMessage('Invalid best by date format'),
   body('photo_url').optional()
 ];
 
@@ -62,8 +71,10 @@ router.get('/:id', async (req, res) => {
 // POST new coffee bean
 router.post('/', validateCoffeeBean, async (req, res) => {
   try {
+    console.log('Received coffee bean data:', req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 

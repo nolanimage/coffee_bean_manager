@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { ArrowLeft, Save, Coffee, Upload, X, Package } from 'lucide-react';
@@ -14,8 +14,18 @@ const AddCoffeeBean = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting }
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      roast_level: 'Medium'
+    }
+  });
+
+  // Ensure roast level is set to Medium on component mount
+  useEffect(() => {
+    setValue('roast_level', 'Medium');
+  }, [setValue]);
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -39,6 +49,8 @@ const AddCoffeeBean = () => {
 
   const onSubmit = async (data) => {
     try {
+      console.log('Form data before processing:', data);
+      
       // Extract currency data from the form
       const formData = {
         ...data,
@@ -46,6 +58,8 @@ const AddCoffeeBean = () => {
         // Set the total_inventory to the amount_grams for new beans
         total_inventory: data.amount_grams || 0
       };
+      
+      console.log('Form data after processing:', formData);
 
       // If there's a photo file, convert to base64
       if (photoFile) {
