@@ -12,6 +12,7 @@ const inventoryRoutes = require('./routes/inventory');
 const brewingRoutes = require('./routes/brewing');
 const costRoutes = require('./routes/cost');
 const brewingLogRoutes = require('./routes/brewing-log');
+const freshnessRoutes = require('./routes/freshness');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -107,6 +108,7 @@ app.use('/api/inventory', inventoryRoutes);
 app.use('/api/brewing', brewingRoutes);
 app.use('/api/cost', costRoutes);
 app.use('/api/brewing-log', brewingLogRoutes);
+app.use('/api/freshness', freshnessRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
